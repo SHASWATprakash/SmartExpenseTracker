@@ -1,97 +1,189 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# SmartExpenseTracker
 
-# Getting Started
+A lightweight React Native expense tracking app with:
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+📊 Dashboard with charts (react-native-chart-kit)
 
-## Step 1: Start Metro
+💸 Manual expense entry
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+🤖 Automatic SMS parsing on Android (extract bank transaction amounts)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+🗄️ Local storage with SQLite + Zustand
 
-```sh
-# Using npm
-npm start
+🎨 Modern UI with gradient cards, spacing tokens, reusable components
 
-# OR using Yarn
-yarn start
-```
+# 🚀 Features
+✅ Core Functionality
 
-## Step 2: Build and run your app
+Add debit / credit transactions manually
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Auto-read bank SMS (Android) & auto-insert expenses
 
-### Android
+Calculate monthly spending
 
-```sh
-# Using npm
-npm run android
+Display recent transactions
 
-# OR using Yarn
+Clean reusable components
+
+SQLite persistent storage
+
+Chart visualizations for spending
+
+# 🧩 Architecture
+src/
+ ├── components/
+ │     ├── BalanceCard.tsx
+ │     ├── SpendingChart.tsx
+ │     ├── PrimaryButton.tsx
+ │     └── ...
+ ├── navigation/
+ │     └── index.tsx
+ ├── screens/
+ │     ├── SplashScreen.tsx
+ │     ├── OnboardingScreen.tsx
+ │     ├── DashboardScreen.tsx
+ │     ├── AddExpenseScreen.tsx
+ │     └── TransactionsScreen.tsx
+ ├── store/
+ │     └── useStore.ts
+ ├── db/
+ │     └── index.ts  (SQLite setup)
+ ├── services/
+ │     └── smsReader.ts (Android SMS)
+ ├── theme/
+ │     ├── Colors.ts
+ │     └── Spacing.ts
+ ├── utils/
+ │     └── date.ts
+ └── App.tsx
+
+#  🛠️ Installation
+1️⃣ Clone
+git clone https://github.com/<your-user>/SmartExpenseTracker.git
+cd SmartExpenseTrackerApp
+
+2️⃣ Install dependencies
+yarn install
+
+3️⃣ iOS Setup
+cd ios
+pod install
+cd ..
+yarn ios
+
+4️⃣ Android Setup
+
+Ensure an emulator is running:
+
 yarn android
-```
 
-### iOS
+# 🤖 SMS Auto-Parsing (Android only)
+Enable permission inside Onboarding
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+App requests READ_SMS
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+If granted → begins listening for incoming SMS
 
-```sh
-bundle install
-```
+Incoming SMS is filtered using regex for banking format
 
-Then, and every time you update your native dependencies, run:
+Parsed into:
 
-```sh
-bundle exec pod install
-```
+{
+  amount,
+  type: 'debit' | 'credit',
+  description,
+  date,
+  source: 'sms'
+}
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+Test incoming SMS in emulator:
+adb emu sms send 5551234 "Your account debited with INR 450.00 at KFC"
 
-```sh
-# Using npm
+
+If regex matches → transaction is added to dashboard automatically.
+
+# 🗄️ Database (SQLite)
+
+Uses react-native-sqlite-storage with fallback to Zustand memory store.
+
+Tables
+transactions: id, amount, type, category, description, date, source
+
+Methods
+
+insertTransaction()
+
+fetchTransactions()
+
+# 🎨 UI & Components
+BalanceCard
+
+Gradient UI
+
+Shows total balance + monthly expenses
+
+SpendingChart
+
+Uses react-native-chart-kit
+
+Auto-updates when transactions change
+
+PrimaryButton
+
+Fully customizable (style + textStyle)
+
+Used across Dashboard & Onboarding
+
+# 🔄 State Management
+
+Using Zustand:
+
+transactions: Transaction[]
+addTransaction(tx)
+removeTransaction(id)
+hydrateFromDB()
+
+# ▶️ Running the App
+Start Metro bundler:
+yarn start
+
+Run iOS:
+yarn ios
+
+Run Android:
+yarn android
+
+# 🧪 DEV Mode Helpers
+Insert sample transaction:
+
+Dashboard → Insert Sample Txn (DEV)
+
+Adds a fake Food transaction for testing.
+
+# 📦 Scripts (npm/yarn)
+Yarn
+"scripts": {
+  "start": "react-native start",
+  "android": "react-native run-android",
+  "ios": "react-native run-ios",
+  "clean": "rm -rf node_modules && yarn install"
+}
+
+npm (same as yarn)
+npm run start
+npm run android
 npm run ios
 
-# OR using Yarn
-yarn ios
-```
+# 🧹 Code Quality
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Component-based architecture
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Centralized theme tokens (Colors, Spacing)
 
-## Step 3: Modify your app
+Proper SafeAreaView usage
 
-Now that you have successfully run the app, let's make changes!
+FlatList with proper keyExtractor
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+SQLite async loading
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Android/iOS platform behavior handled separately
