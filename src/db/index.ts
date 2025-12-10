@@ -1,3 +1,4 @@
+// src/db/index.ts
 import SQLite from 'react-native-sqlite-storage';
 import { Transaction } from '../types';
 
@@ -28,15 +29,18 @@ export async function initDB() {
 export async function insertTransaction(tx: Transaction) {
   const db = await getDB();
   await db.executeSql(
-    `INSERT OR REPLACE INTO transactions (id, amount, type, date, bank, description, category, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [tx.id, tx.amount, tx.type, tx.date, tx.bank || '', tx.description || '', tx.category || '', tx.source]
+    `INSERT OR REPLACE INTO transactions (id, amount, type, date, bank, description, category, source)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [tx.id, tx.amount, tx.type, tx.date, tx.bank ?? '', tx.description ?? '', tx.category ?? '', tx.source]
   );
 }
 
 export async function fetchTransactions(): Promise<Transaction[]> {
   const db = await getDB();
-  const [res] = await db.executeSql(`SELECT * FROM transactions ORDER BY date DESC;`);
+  const [result] = await db.executeSql(`SELECT * FROM transactions ORDER BY date DESC;`);
   const rows: Transaction[] = [];
-  for (let i = 0; i < res.rows.length; i++) rows.push(res.rows.item(i));
+  for (let i = 0; i < result.rows.length; i++) {
+    rows.push(result.rows.item(i));
+  }
   return rows;
 }

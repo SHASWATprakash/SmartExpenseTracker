@@ -1,16 +1,21 @@
+// App.tsx
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './src/navigation';
 import { useHydrateStore } from './src/hooks/useHydrateStore';
+import LinearGradient from 'react-native-linear-gradient';
+import { Colors } from './src/theme';
 
 export default function App() {
-  useHydrateStore(); // hydrate zustand from AsyncStorage at app start
+  useHydrateStore();
 
   return (
     <PaperProvider>
       <StatusBar barStyle="dark-content" />
-      <AppNavigator />
+      <LinearGradient colors={[Colors.background, '#ffffff']} style={{ flex: 1 }}>
+        <AppNavigator />
+      </LinearGradient>
     </PaperProvider>
   );
 }
