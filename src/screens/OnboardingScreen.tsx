@@ -118,7 +118,7 @@ export default function OnboardingScreen() {
           <Text style={styles.status}>{statusText}</Text>
         ) : (
           <Text style={styles.hint}>
-            On Android you will be asked to allow SMS access. Use the demo `adb emu sms send` command to test parsing in the emulator.
+            On Android you will be asked to allow SMS access. 
           </Text>
         )}
       </View>
